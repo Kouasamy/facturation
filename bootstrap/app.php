@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\HandleCors;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 return Application::configure(basePath: dirname(__DIR__))
 ->withRouting(
@@ -14,7 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
 )
 ->withMiddleware(function (Middleware $middleware) {
     $middleware->api([
-        \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+        EnsureFrontendRequestsAreStateful::class,
     ]);
 
     // Configuration CORS pour permettre les requêtes API
@@ -22,6 +23,10 @@ return Application::configure(basePath: dirname(__DIR__))
         HandleCors::class,
     ]);
 })
-    ->withExceptions(function (Exceptions $exceptions): void {
-        //
-    })->create();
+->withExceptions(function (Exceptions $exceptions): void {
+    $exceptions->renderable(function (\Illuminate\Auth\AuthenticationException $e, $request) {
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Non authentifié.'], 401);
+        }
+    });
+})->create();

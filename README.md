@@ -1,55 +1,117 @@
-# Module de Facturation Laravel
+# Module de Facturation Laravel - Documentation Complète
 
-Un module de facturation complet développé avec Laravel 12 permettant la gestion des clients, l'émission de factures avec calculs automatiques, et l'export des données.
+## 📋 Vue d'ensemble
 
-## Fonctionnalités
+Un module de facturation complet développé avec Laravel 12 permettant la gestion des clients, l'émission de factures avec calculs automatiques, l'export des données et l'authentification sécurisée via API RESTful.
 
-### ✅ Gestion des Clients
-- **Lister les clients** : `GET /api/clients`
-- **Créer un client** : `POST /api/clients`
-- **Afficher un client** : `GET /api/clients/{id}`
-- **Modifier un client** : `PUT /api/clients/{id}`
+Ce module offre une solution complète pour la gestion de facturation avec une architecture robuste, des validations métier strictes et une interface API complète.
+
+## 🚀 Fonctionnalités
+
+### ✅ Gestion Complète des Clients
+- **Lister tous les clients** : `GET /api/clients`
+- **Créer un nouveau client** : `POST /api/clients`
+- **Afficher un client spécifique** : `GET /api/clients/{id}`
+- **Modifier un client existant** : `PUT /api/clients/{id}`
 - **Supprimer un client** : `DELETE /api/clients/{id}`
 
-### ✅ Gestion des Factures
-- **Lister les factures** : `GET /api/factures`
-- **Créer une facture** : `POST /api/factures`
-- **Afficher une facture** : `GET /api/factures/{id}`
-- **Modifier une facture** : `PUT /api/factures/{id}`
+### ✅ Gestion Avancée des Factures
+- **Lister toutes les factures** : `GET /api/factures`
+- **Créer une nouvelle facture** : `POST /api/factures`
+- **Afficher une facture spécifique** : `GET /api/factures/{id}`
+- **Modifier une facture existante** : `PUT /api/factures/{id}`
 - **Supprimer une facture** : `DELETE /api/factures/{id}`
 - **Rechercher par client** : `GET /api/factures/search/client/{clientId}`
 - **Rechercher par date** : `GET /api/factures/search/date/{date}`
 
 ### ✅ Export des Données
-- **Exporter toutes les factures** : `GET /api/factures/export/json`
+- **Exporter toutes les factures en JSON** : `GET /api/factures/export/json`
 - **Export complet (clients + factures)** : `GET /api/export/complet`
 
-### ✅ Authentification (Bonus)
-- **Inscription** : `POST /api/auth/register`
-- **Connexion** : `POST /api/auth/login`
-- **Déconnexion** : `POST /api/auth/logout`
-- **Utilisateur connecté** : `GET /api/user`
+### ✅ Authentification Sécurisée (Bonus)
+- **Inscription utilisateur** : `POST /api/auth/register`
+- **Connexion utilisateur** : `POST /api/auth/login`
+- **Déconnexion utilisateur** : `POST /api/auth/logout`
+- **Récupérer l'utilisateur connecté** : `GET /api/user`
 
-## Règles Métier
+## 🗄️ Structure de la Base de Données
 
-### Validation des Données
-- ✅ Une facture doit avoir au moins une ligne
-- ✅ Aucun champ ne doit être vide
-- ✅ Le taux de TVA doit être 0%, 5.5%, 10% ou 20%
+### Table `clients`
+- `id` : Identifiant unique (BigInteger, Auto-increment)
+- `name` : Nom du client (String, Requis)
+- `email` : Email du client (String, Requis, Unique)
+- `siret` : Numéro SIRET (String, Requis, Unique)
+- `adresse` : Adresse du client (String, Optionnel)
+- `ville` : Ville du client (String, Optionnel)
+- `telephone` : Numéro de téléphone (String, Optionnel)
+- `created_at` : Date de création (Timestamp)
+- `updated_at` : Date de mise à jour (Timestamp)
 
-### Calculs Automatiques
-- ✅ Total HT : quantité × prix unitaire
-- ✅ Total TVA : montant HT × taux TVA
-- ✅ Total TTC : montant HT + montant TVA
+### Table `factures`
+- `id` : Identifiant unique (BigInteger, Auto-increment)
+- `client_id` : Référence au client (Foreign Key, Requis)
+- `numero_facture` : Numéro unique de facture (String, Requis, Unique)
+- `date_emission` : Date d'émission (Date, Requis)
+- `date_echeance` : Date d'échéance (Date, Requis)
+- `montant_ht` : Montant hors taxes (Decimal, Calculé)
+- `montant_tva` : Montant TVA (Decimal, Calculé)
+- `montant_ttc` : Montant toutes taxes comprises (Decimal, Calculé)
+- `statut` : Statut de la facture (Enum: brouillon, envoyée, payée, en retard)
+- `notes` : Notes additionnelles (Text, Optionnel)
+- `created_at` : Date de création (Timestamp)
+- `updated_at` : Date de mise à jour (Timestamp)
 
-## Prérequis Techniques
+### Table `facture_articles` (Lignes de facture)
+- `id` : Identifiant unique (BigInteger, Auto-increment)
+- `facture_id` : Référence à la facture (Foreign Key, Requis)
+- `description` : Description de l'article (String, Requis)
+- `quantite` : Quantité (Integer, Requis, Min: 1)
+- `prix_unitaire` : Prix unitaire HT (Decimal, Requis, Min: 0)
+- `taux_tva` : Taux de TVA en pourcentage (Decimal, Requis)
+- `montant_ht` : Montant HT pour cet article (Decimal, Calculé)
+- `montant_tva` : Montant TVA pour cet article (Decimal, Calculé)
+- `montant_ttc` : Montant TTC pour cet article (Decimal, Calculé)
+- `created_at` : Date de création (Timestamp)
+- `updated_at` : Date de mise à jour (Timestamp)
 
-- PHP 8.2+
-- Laravel 12+
-- SQLite ou PostgreSQL
-- Composer
+## 🔌 API Endpoints Complets
 
-## Installation
+### Authentification
+- **POST /api/auth/register** - Inscription d'un nouvel utilisateur
+- **POST /api/auth/login** - Connexion d'un utilisateur
+- **POST /api/auth/logout** - Déconnexion
+- **GET /api/user** - Récupérer les informations de l'utilisateur connecté
+
+### Clients
+- **GET /api/clients** - Liste tous les clients (Authentification requise)
+- **POST /api/clients** - Créer un nouveau client (Authentification requise)
+- **GET /api/clients/{id}** - Afficher un client spécifique (Authentification requise)
+- **PUT /api/clients/{id}** - Mettre à jour un client (Authentification requise)
+- **DELETE /api/clients/{id}** - Supprimer un client (Authentification requise)
+
+### Factures
+- **GET /api/factures** - Liste toutes les factures (Authentification requise)
+- **POST /api/factures** - Créer une nouvelle facture (Authentification requise)
+- **GET /api/factures/{id}** - Afficher une facture spécifique (Authentification requise)
+- **PUT /api/factures/{id}** - Mettre à jour une facture (Authentification requise)
+- **DELETE /api/factures/{id}** - Supprimer une facture (Authentification requise)
+- **GET /api/factures/search/client/{clientId}** - Rechercher les factures d'un client (Authentification requise)
+- **GET /api/factures/search/date/{date}** - Rechercher les factures par date (Authentification requise)
+
+### Export
+- **GET /api/factures/export/json** - Exporter toutes les factures en JSON (Authentification requise)
+- **GET /api/export/complet** - Exporter toutes les données (clients + factures) (Authentification requise)
+
+## 🛠️ Installation et Configuration
+
+### Prérequis Techniques
+- **PHP 8.2+** avec extensions requises
+- **Laravel 12+**
+- **SQLite** ou **PostgreSQL** (recommandé)
+- **Composer** pour la gestion des dépendances
+- **Node.js** (optionnel pour les assets frontend)
+
+### Étapes d'Installation
 
 1. **Cloner le projet**
    ```bash
@@ -57,37 +119,60 @@ Un module de facturation complet développé avec Laravel 12 permettant la gesti
    cd facturation
    ```
 
-2. **Installer les dépendances**
+2. **Installer les dépendances PHP**
    ```bash
    composer install
    ```
 
-3. **Configurer la base de données**
+3. **Configurer l'environnement**
    ```bash
    cp .env.example .env
-   # Configurer DB_CONNECTION=sqlite ou DB_CONNECTION=pgsql
    ```
 
-4. **Générer la clé d'application**
+4. **Configurer la base de données**
+   Modifier le fichier `.env` :
+   ```env
+   DB_CONNECTION=sqlite
+   # ou
+   DB_CONNECTION=pgsql
+   DB_HOST=127.0.0.1
+   DB_PORT=5432
+   DB_DATABASE=facturation
+   DB_USERNAME=postgres
+   DB_PASSWORD=
+   ```
+
+   Pour SQLite, créer le fichier de base de données :
+   ```bash
+   touch database/database.sqlite
+   ```
+
+5. **Générer la clé d'application**
    ```bash
    php artisan key:generate
    ```
 
-5. **Exécuter les migrations**
+6. **Exécuter les migrations**
    ```bash
    php artisan migrate
    ```
 
-6. **Démarrer le serveur**
+7. **Démarrer le serveur de développement**
    ```bash
    php artisan serve
    ```
 
-## Utilisation de l'API
+8. **Installer les dépendances frontend (optionnel)**
+   ```bash
+   npm install
+   npm run dev
+   ```
+
+## 🎯 Utilisation de l'API
 
 ### Authentification
 
-**Inscription :**
+**Inscription d'un utilisateur :**
 ```bash
 curl -X POST http://localhost:8000/api/auth/register \
   -H "Content-Type: application/json" \
@@ -99,7 +184,7 @@ curl -X POST http://localhost:8000/api/auth/register \
   }'
 ```
 
-**Connexion :**
+**Connexion et récupération du token :**
 ```bash
 curl -X POST http://localhost:8000/api/auth/login \
   -H "Content-Type: application/json" \
@@ -109,7 +194,7 @@ curl -X POST http://localhost:8000/api/auth/login \
   }'
 ```
 
-**Utiliser le token :**
+**Utiliser le token JWT pour les requêtes authentifiées :**
 ```bash
 curl -X GET http://localhost:8000/api/user \
   -H "Authorization: Bearer VOTRE_TOKEN_JWT" \
@@ -118,7 +203,7 @@ curl -X GET http://localhost:8000/api/user \
 
 ### Gestion des Clients
 
-**Créer un client :**
+**Créer un nouveau client :**
 ```bash
 curl -X POST http://localhost:8000/api/clients \
   -H "Authorization: Bearer VOTRE_TOKEN_JWT" \
@@ -126,13 +211,22 @@ curl -X POST http://localhost:8000/api/clients \
   -d '{
     "name": "Entreprise XYZ",
     "email": "contact@xyz.fr",
-    "siret": "12345678901234"
+    "siret": "12345678901234",
+    "adresse": "123 Rue des Exemples",
+    "ville": "Paris",
+    "telephone": "0123456789"
   }'
+```
+
+**Lister tous les clients :**
+```bash
+curl -X GET http://localhost:8000/api/clients \
+  -H "Authorization: Bearer VOTRE_TOKEN_JWT"
 ```
 
 ### Gestion des Factures
 
-**Créer une facture :**
+**Créer une facture complète :**
 ```bash
 curl -X POST http://localhost:8000/api/factures \
   -H "Authorization: Bearer VOTRE_TOKEN_JWT" \
@@ -141,7 +235,7 @@ curl -X POST http://localhost:8000/api/factures \
     "client_id": 1,
     "date_emission": "2024-01-15",
     "date_echeance": "2024-02-15",
-    "notes": "Facture de test",
+    "notes": "Facture pour services de développement",
     "articles": [
       {
         "description": "Service de développement web",
@@ -150,22 +244,28 @@ curl -X POST http://localhost:8000/api/factures \
         "taux_tva": 20.00
       },
       {
-        "description": "Hébergement web",
+        "description": "Hébergement web mensuel",
         "quantite": 1,
         "prix_unitaire": 120.00,
         "taux_tva": 20.00
+      },
+      {
+        "description": "Conseil stratégique",
+        "quantite": 5,
+        "prix_unitaire": 200.00,
+        "taux_tva": 10.00
       }
     ]
   }'
 ```
 
-**Rechercher par client :**
+**Rechercher les factures d'un client spécifique :**
 ```bash
 curl -X GET http://localhost:8000/api/factures/search/client/1 \
   -H "Authorization: Bearer VOTRE_TOKEN_JWT"
 ```
 
-**Rechercher par date :**
+**Rechercher les factures par date :**
 ```bash
 curl -X GET http://localhost:8000/api/factures/search/date/2024-01-15 \
   -H "Authorization: Bearer VOTRE_TOKEN_JWT"
@@ -173,60 +273,257 @@ curl -X GET http://localhost:8000/api/factures/search/date/2024-01-15 \
 
 ### Export des Données
 
-**Exporter les factures :**
+**Exporter toutes les factures en JSON :**
 ```bash
 curl -X GET http://localhost:8000/api/factures/export/json \
   -H "Authorization: Bearer VOTRE_TOKEN_JWT"
 ```
 
-## Structure de la Base de Données
+**Export complet (clients + factures) :**
+```bash
+curl -X GET http://localhost:8000/api/export/complet \
+  -H "Authorization: Bearer VOTRE_TOKEN_JWT"
+```
 
-### Clients
-- id, nom, email, siret, created_at, updated_at
+## 🧪 Guide de Test avec Postman
 
-### Factures  
-- id, client_id, numero_facture, date_emission, date_echeance
-- montant_ht, montant_tva, montant_ttc, statut, notes
+### Configuration de Base Postman
+1. **URL de base**: `http://127.0.0.1:8000/api`
+2. **Serveur Laravel**: Assurez-vous que `php artisan serve` est en cours d'exécution
+3. **Environnement**: Créez un environnement Postman avec la variable `base_url`
 
-### Facture Articles
-- id, facture_id, description, quantite, prix_unitaire
-- taux_tva, montant_ht, montant_tva, montant_ttc
+### Collection Postman Recommandée
 
-## Tests (Bonus)
+**Authentification:**
+- **POST** `/auth/register` - Inscription
+  ```json
+  {
+      "name": "Test User",
+      "email": "test@example.com",
+      "password": "password",
+      "password_confirmation": "password"
+  }
+  ```
 
-### Tests Unitaires
-Les tests unitaires sont disponibles pour vérifier les fonctionnalités métier :
+- **POST** `/auth/login` - Connexion
+  ```json
+  {
+      "email": "test@example.com",
+      "password": "password"
+  }
+  ```
 
+**Gestion des Clients:**
+- **GET** `/clients` - Lister les clients (Header: `Authorization: Bearer {{token}}`)
+- **POST** `/clients` - Créer un client
+  ```json
+  {
+      "name": "Entreprise Test",
+      "email": "client@test.com",
+      "siret": "12345678901234"
+  }
+  ```
+- **GET** `/clients/{id}` - Afficher un client
+
+**Gestion des Factures:**
+- **GET** `/factures` - Lister les factures
+- **POST** `/factures` - Créer une facture
+  ```json
+  {
+      "client_id": 1,
+      "date_emission": "2024-01-15",
+      "date_echeance": "2024-02-15",
+      "articles": [
+          {
+              "description": "Service de développement",
+              "quantite": 10,
+              "prix_unitaire": 100,
+              "taux_tva": 20
+          },
+          {
+              "description": "Conseil stratégique",
+              "quantite": 5,
+              "prix_unitaire": 200,
+              "taux_tva": 10
+          }
+      ]
+  }
+  ```
+
+**Export:**
+- **GET** `/factures/export/json` - Exporter en JSON
+- **GET** `/factures/search/client/{clientId}` - Recherche par client
+- **GET** `/factures/search/date/{date}` - Recherche par date
+
+### Scénarios de Test Complets
+
+**Tests de Validation Métier:**
+1. **Facture sans articles** → Doit échouer avec erreur de validation
+2. **Champs obligatoires vides** → Doit échouer avec erreur de validation
+3. **Taux TVA invalide** → Doit échouer (seuls 0%, 5.5%, 10%, 20% acceptés)
+4. **Quantité négative** → Doit échouer avec erreur de validation
+5. **Prix unitaire négatif** → Doit échouer avec erreur de validation
+
+**Tests de Calculs Automatiques:**
+1. Vérifier que les totaux HT sont calculés correctement
+2. Vérifier que les montants TVA sont calculés correctement
+3. Vérifier que les totaux TTC sont calculés correctement
+4. Vérifier la cohérence entre les totaux de la facture et la somme des articles
+
+**Tests d'Authentification:**
+1. Accès aux endpoints sans token → Doit échouer avec erreur 401
+2. Accès avec token invalide → Doit échouer avec erreur 401
+3. Accès avec token valide → Doit réussir
+
+## 📊 Règles Métier et Validation
+
+### Validation des Données
+- ✅ **Facture doit avoir au moins une ligne** - Une facture ne peut pas être créée sans articles
+- ✅ **Aucun champ obligatoire ne doit être vide** - Tous les champs marqués comme requis doivent être fournis
+- ✅ **Taux de TVA valides** - Seuls les taux 0%, 5.5%, 10% et 20% sont acceptés
+- ✅ **Quantité positive** - La quantité doit être un entier positif (≥1)
+- ✅ **Prix unitaire positif** - Le prix unitaire doit être un nombre positif (≥0)
+- ✅ **Email valide** - Les adresses email doivent être au format valide
+- ✅ **SIRET unique** - Le numéro SIRET doit être unique parmi tous les clients
+- ✅ **Numéro de facture unique** - Chaque facture doit avoir un numéro unique
+
+### Calculs Automatiques
+
+**Pour chaque article:**
+- **Montant HT** = `quantité × prix unitaire`
+- **Montant TVA** = `montant HT × (taux TVA / 100)`
+- **Montant TTC** = `montant HT + montant TVA`
+
+**Pour la facture entière:**
+- **Total HT** = `∑(montant HT de tous les articles)`
+- **Total TVA** = `∑(montant TVA de tous les articles)`
+- **Total TTC** = `∑(montant TTC de tous les articles)` ou `Total HT + Total TVA`
+
+**Exemple de calcul:**
+- Article: 10 unités × 100€ HT + TVA 20%
+- Montant HT = 10 × 100 = 1 000€
+- Montant TVA = 1 000 × 0.20 = 200€
+- Montant TTC = 1 000 + 200 = 1 200€
+
+## 🧪 Tests Unitaires
+
+### Exécution des Tests
 ```bash
 php artisan test
 ```
 
-**Tests inclus :**
-- Calculs automatiques des totaux de facture
-- Génération de numéros de facture uniques
-- Validation des taux de TVA
+### Tests Implémentés
 
-### Tests d'Authentification
-Les tests d'authentification vérifient :
+**Tests de Calcul:**
+- Vérification des calculs automatiques des totaux de facture
+- Tests des différents taux de TVA (0%, 5.5%, 10%, 20%)
+- Vérification de la cohérence des calculs
+
+**Tests de Validation:**
+- Validation des données d'entrée des clients
+- Validation des données d'entrée des factures
+- Validation des articles de facture
+
+**Tests d'Authentification:**
 - Inscription d'utilisateur
 - Connexion/déconnexion
 - Récupération de l'utilisateur connecté
+- Protection des endpoints authentifiés
 
-## Technologies Utilisées
+**Tests de Génération:**
+- Génération de numéros de facture uniques
+- Vérification de l'unicité des contraintes
 
-- **PHP 8.2+**
-- **Laravel 12+**
-- **Laravel Sanctum** (Authentification API)
-- **SQLite/PostgreSQL**
-- **API RESTful**
-- **Validation robuste**
-- **Architecture MVC**
-- **PHPUnit** (Tests unitaires)
+## 🔒 Sécurité
 
-## Sécurité
+### Mesures de Sécurité Implémentées
+- **Authentification par token JWT** via Laravel Sanctum
+- **Validation robuste** des données d'entrée
+- **Protection contre les injections SQL** grâce à l'ORM Eloquent
+- **Gestion sécurisée des mots de passe** avec hash bcrypt
+- **Protection CSRF** pour les requêtes web
+- **Validation des taux TVA** pour prévenir les erreurs de calcul
+- **Contrôle d'accès** basé sur l'authentification
 
-- Authentification par token JWT
-- Validation des données d'entrée
-- Protection contre les injections SQL
-- Gestion sécurisée des mots de passe (hash bcrypt)
+### Bonnes Pratiques de Sécurité
+- Utilisation de tokens d'authentification avec expiration
+- Validation de tous les champs d'entrée
+- Hashage des mots de passe avec bcrypt
+- Utilisation de requêtes préparées
+- Protection contre les attaques XSS
+- Gestion sécurisée des erreurs
 
+## 🛠️ Technologies Utilisées
+
+### Backend
+- **PHP 8.2+** - Langage de programmation
+- **Laravel 12+** - Framework PHP moderne
+- **Laravel Sanctum** - Authentification API
+- **Eloquent ORM** - ORM pour la base de données
+- **PHPUnit** - Framework de tests unitaires
+
+### Base de Données
+- **SQLite** - Base de données légère (développement)
+- **PostgreSQL** - Base de données relationnelle (production)
+- **Migrations Laravel** - Gestion du schéma de base de données
+
+### Outils de Développement
+- **Composer** - Gestionnaire de dépendances PHP
+- **Artisan** - CLI de Laravel
+- **Postman** - Test et documentation d'API
+
+### Sécurité
+- **JWT Tokens** - Authentification stateless
+- **BCrypt** - Hashage des mots de passe
+- **Validation Laravel** - Validation des données
+
+## 📈 Architecture
+
+### Pattern MVC
+- **Modèles** - Représentent les données (Client, Facture, FactureArticle, User)
+- **Vues** - Interface utilisateur (Blade templates)
+- **Contrôleurs** - Gèrent la logique métier (AuthController, ClientController, FactureController)
+
+### API RESTful
+- Endpoints standards REST
+- Codes HTTP appropriés
+- Format JSON pour toutes les réponses
+- Authentification stateless
+
+### Validation des Données
+- Form Requests Laravel pour la validation
+- Règles métier personnalisées
+- Messages d'erreur descriptifs
+
+
+## 🤝 Contribution
+
+### Guidelines de Développement
+1. Suivre les standards PSR
+2. Écrire des tests unitaires pour les nouvelles fonctionnalités
+3. Documenter les nouvelles API endpoints
+4. Vérifier la validation des données
+5. Tester les calculs automatiques
+
+### Structure du Code
+```
+app/
+├── Http/
+│   ├── Controllers/
+│   │   ├── Api/
+│   │   │   ├── AuthController.php
+│   │   │   ├── ClientController.php
+│   │   │   └── FactureController.php
+│   │   └── Controller.php
+│   └── Requests/
+│       ├── StoreClientRequest.php
+│       ├── StoreFactureRequest.php
+│       ├── UpdateClientRequest.php
+│       └── UpdateFactureRequest.php
+├── Models/
+│   ├── Client.php
+│   ├── Facture.php
+│   ├── FactureArticle.php
+│   └── User.php
+└── Providers/
+```

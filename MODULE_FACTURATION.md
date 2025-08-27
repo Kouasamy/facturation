@@ -6,35 +6,38 @@ Ce module de facturation complet permet de gérer des clients et leurs factures 
 ## Structure des tables
 
 ### Table `Client` (clients)
-- `id` : identifiant unique
-- `name` : nom du client
-- `email` : email du client
-- `siret` : numéro SIRET (optionnel)
-- `created_at` : date de création
-- `updated_at` : date de mise à jour
+- `id` : Identifiant unique
+- `name` : Nom du client
+- `email` : Email du client
+- `siret` : Numéro SIRET
+- `adresse` : Adresse du client (optionnel)
+- `ville` : Ville du client (optionnel)
+- `telephone` : Numéro de téléphone du client (optionnel)
+- `created_at` : Date de création
+- `updated_at` : Date de mise à jour
 
 ### Table `factures` (factures)
-- `id` : identifiant unique
-- `client_id` : référence au client
-- `numero_facture` : numéro unique de facture
-- `date_emission` : date d'émission
-- `date_echeance` : date d'échéance
-- `montant_ht` : montant hors taxes
-- `montant_tva` : montant TVA
-- `montant_ttc` : montant toutes taxes comprises
-- `statut` : statut de la facture (brouillon, envoyée, payée, en retard)
-- `notes` : notes additionnelles
+- `id` : Identifiant unique
+- `client_id` : Référence au client
+- `numero_facture` : Numéro unique de facture
+- `date_emission` : Date d'émission
+- `date_echeance` : Date d'échéance
+- `montant_ht` : Montant hors taxes
+- `montant_tva` : Montant TVA
+- `montant_ttc` : Montant toutes taxes comprises
+- `statut` : Statut de la facture (brouillon, envoyée, payée, en retard)
+- `notes` : Notes additionnelles
 
 ### Table `facture_articles` (invoice items)
-- `id` : identifiant unique
-- `facture_id` : référence à la facture
-- `description` : description de l'article
-- `quantite` : quantité
-- `prix_unitaire` : prix unitaire HT
-- `taux_tva` : taux de TVA en pourcentage
-- `montant_ht` : montant HT pour cet article
-- `montant_tva` : montant TVA pour cet article
-- `montant_ttc` : montant TTC pour cet article
+- `id` : Identifiant unique
+- `facture_id` : Référence à la facture
+- `description` : Description de l'article
+- `quantite` : Quantité
+- `prix_unitaire` : Prix unitaire HT
+- `taux_tva` : Taux de TVA en pourcentage
+- `montant_ht` : Montant HT pour cet article
+- `montant_tva` : Montant TVA pour cet article
+- `montant_ttc` : Montant TTC pour cet article
 
 ## API Endpoints
 
