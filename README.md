@@ -466,16 +466,6 @@ curl -X GET http://localhost:8000/api/export/complet \
 - Règles métier personnalisées
 - Messages d'erreur descriptifs
 
-
-## 🤝 Contribution
-
-### Guidelines de Développement
-1. Suivre les standards PSR
-2. Écrire des tests unitaires pour les nouvelles fonctionnalités
-3. Documenter les nouvelles API endpoints
-4. Vérifier la validation des données
-5. Tester les calculs automatiques
-
 ### Structure du Code
 ```
 app/
