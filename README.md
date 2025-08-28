@@ -405,39 +405,10 @@ curl -X GET http://localhost:8000/api/export/complet \
 - Montant TVA = 1 000 × 0.20 = 200€
 - Montant TTC = 1 000 + 200 = 1 200€
 
-## 🧪 Tests Unitaires
-
-### Exécution des Tests
-```bash
-php artisan test
-```
-
-### Tests Implémentés
-
-**Tests de Calcul:**
-- Vérification des calculs automatiques des totaux de facture
-- Tests des différents taux de TVA (0%, 5.5%, 10%, 20%)
-- Vérification de la cohérence des calculs
-
-**Tests de Validation:**
-- Validation des données d'entrée des clients
-- Validation des données d'entrée des factures
-- Validation des articles de facture
-
-**Tests d'Authentification:**
-- Inscription d'utilisateur
-- Connexion/déconnexion
-- Récupération de l'utilisateur connecté
-- Protection des endpoints authentifiés
-
-**Tests de Génération:**
-- Génération de numéros de facture uniques
-- Vérification de l'unicité des contraintes
-
 ## 🔒 Sécurité
 
 ### Mesures de Sécurité Implémentées
-- **Authentification par token JWT** via Laravel Sanctum
+- **Authentification par token** via Laravel Sanctum
 - **Validation robuste** des données d'entrée
 - **Protection contre les injections SQL** grâce à l'ORM Eloquent
 - **Gestion sécurisée des mots de passe** avec hash bcrypt
