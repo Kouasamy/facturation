@@ -38,7 +38,7 @@ Ce module offre une solution complète pour la gestion de facturation avec une a
 
 ### Table `clients`
 - `id` : Identifiant unique (BigInteger, Auto-increment)
-- `name` : Nom du client (String, Requis)
+- `nom` : Nom du client (String, Requis)
 - `email` : Email du client (String, Requis, Unique)
 - `siret` : Numéro SIRET (String, Requis, Unique)
 - `adresse` : Adresse du client (String, Optionnel)
